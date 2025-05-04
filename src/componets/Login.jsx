@@ -1,9 +1,10 @@
-import React, { use, useState } from 'react';
+import React, { use, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { AuthContex } from '../provider/AuthProvider';
 
 const Login = () => {
-    const { logIn } = use(AuthContex)
+    const emailRef = useRef();
+    const { logIn, resetPassword } = use(AuthContex)
     const navigate = useNavigate();
     const location = useLocation();
     const [erromsg, setErromsg] = useState();
@@ -31,6 +32,20 @@ const Login = () => {
 
 
     }
+    const forgetPasswordHandle = (e)=>{
+        
+        const email = emailRef.current.value;
+      
+        resetPassword(email)
+        .then(()=>{
+            alert('A send email for password reset, please check your password')
+
+        })
+        .catch(error=>{
+            const errorMessage = error.message;
+            console.log(errorMessage)
+        })   
+    }
 
     return (
         <div>
@@ -38,9 +53,10 @@ const Login = () => {
                 <h1 className='text-3xl font-semibold text-center py-5'>Login  Your account </h1>
                 <form onSubmit={handleLogin} className='grid grid-cols-1 space-y-4 px-5'>
                     <label className='label'>Email</label>
-                    <input type="text" name="email" className='input' required />
+                    <input type="text" name="email" ref={emailRef} className='input' required />
                     <label className='label'>Password</label>
                     <input type="password" name="password" className='input' required />
+                    <p onClick={forgetPasswordHandle} className='cursor-pointer hover:text-blue-500'>Forget password</p>
                     {erromsg && <p className='text-red-500 '>{erromsg}</p>}
                     <button className='btn btn-neutral mt-4 w-full'>Login</button>
                     <p className='mt-3 font-semibold pb-5'>Have you an account?go <Link to='/auth/register' className='text-blue-600'>Register</Link></p>
